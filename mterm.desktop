@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=mterm
+Comment=Mateja's VTE based minimal terminal emulator
+Exec=mterm
+Icon=utilities-terminal
+Type=Application
+Categories=GTK;System;TerminalEmulator;
+StartupNotify=true

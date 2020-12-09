@@ -1,11 +1,11 @@
-CC 			:= gcc
-CFLAGS 	:= -O2 -Wall $(shell pkg-config --cflags vte-2.91)
-LIBS 		:= $(shell pkg-config --libs vte-2.91)
+CC      := gcc
+CFLAGS  := -O2 -Wall $(shell pkg-config --cflags vte-2.91)
+LIBS    := $(shell pkg-config --libs vte-2.91)
 
-PREFIX ?= /usr/local
-BINDIR ?= ${PREFIX}/bin
+PREFIX  ?= /usr/local
+BINDIR  ?= ${PREFIX}/bin
 DATADIR ?= ${PREFIX}/share
-MANDIR ?= ${DATADIR}/man
+MANDIR  ?= ${DATADIR}/man
 
 mterm: main.c config.h; $(CC) $(CFLAGS) $? $(LIBS) -o $@
 

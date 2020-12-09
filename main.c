@@ -15,6 +15,7 @@ static void child_ready(VteTerminal*, GPid, GError*, gpointer);
 
 int main(int argc, char *argv[]) {
     GtkWidget *window, *terminal;
+    VteTerminal *vTerminal;
 
     /* Initialise GTK, the window and the terminal */
     gtk_init(&argc, &argv);
@@ -22,8 +23,10 @@ int main(int argc, char *argv[]) {
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW(window), "mterm");
 
+    vTerminal = VTE_TERMINAL(terminal);
+
     /* Set colors */
-    vte_terminal_set_colors(VTE_TERMINAL(terminal),
+    vte_terminal_set_colors(vTerminal,
         &CLR_GDK(foreground, 0),
         &CLR_GDK(background, transparency),
         (const GdkRGBA[]){
@@ -46,17 +49,18 @@ int main(int argc, char *argv[]) {
     }, 16);
 
     /* More settings */
-    vte_terminal_set_scrollback_lines(VTE_TERMINAL(terminal), max_lines);
-    vte_terminal_set_scroll_on_output(VTE_TERMINAL(terminal), scroll_on_output);
-    vte_terminal_set_scroll_on_keystroke(VTE_TERMINAL(terminal), scroll_on_keystroke);
-    vte_terminal_set_mouse_autohide(VTE_TERMINAL(terminal), mouse_autohide);
-    vte_terminal_set_allow_hyperlink(VTE_TERMINAL(terminal), TRUE);
+    vte_terminal_set_scrollback_lines(vTerminal, max_lines);
+    vte_terminal_set_scroll_on_output(vTerminal, scroll_on_output);
+    vte_terminal_set_scroll_on_keystroke(vTerminal, scroll_on_keystroke);
+    vte_terminal_set_mouse_autohide(vTerminal, mouse_autohide);
+    vte_terminal_set_allow_hyperlink(vTerminal, TRUE);
+    vte_terminal_set_font_scale(vTerminal, font_scale);
 
     /* Start a new shell */
     gchar **envp = g_get_environ();
     gchar **command = (gchar *[]){g_strdup(g_environ_getenv(envp, "SHELL")), NULL };
     g_strfreev(envp);
-    vte_terminal_spawn_async(VTE_TERMINAL(terminal),
+    vte_terminal_spawn_async(vTerminal,
         VTE_PTY_DEFAULT,
         NULL,         /* working directory  */
         command,      /* command */
@@ -72,6 +76,8 @@ int main(int argc, char *argv[]) {
     /* Connect some signals */
     g_signal_connect(window, "delete-event", gtk_main_quit, NULL);
     g_signal_connect(terminal, "child-exited", gtk_main_quit, NULL);
+
+    gtk_widget_set_visual(window, gdk_screen_get_rgba_visual(gtk_widget_get_screen(window)));
 
     /* Put widgets together and run the main loop */
     gtk_container_add(GTK_CONTAINER(window), terminal);

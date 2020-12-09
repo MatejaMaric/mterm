@@ -33,3 +33,5 @@ static const int foreground_bold = 0xd8dee9;
 static const int background = 0x171a20;
 
 static const int highlight = 0x4c566a;
+
+static const double font_scale = 1.1;
